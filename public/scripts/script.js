@@ -72,6 +72,8 @@ $(function()
 					
 					update();
 				}	
+
+				
 			
 });
 
@@ -93,7 +95,7 @@ function Tile(id, x, y)
 	this.tileImage.y = this.y;
 }
 
-function Bullet(id, x, y)
+function Bullet(id, x, y, dir)
 {
 	this.id = id;
 
@@ -103,6 +105,8 @@ function Bullet(id, x, y)
 	this.ballImage = new createjs.Bitmap(queue.getResult("ball"));
 
 	//if shooting tank is looking up or down image should be vertical bullet else horizontal bullet
+	if(dir == "horizontal") this.bulletImage = new createjs.Bitmap(queue.getResult("bulletH"));
+	else if(dir == "vertical") this.bulletImage = new createjs.Bitmap(queue.getResult("bulletV"));
 	
 	this.bulletImage.x = this.x;
 	this.bulletImage.y = this.y;
