@@ -92,6 +92,21 @@ function Tile(id, x, y)
 	this.tileImage.x = this.x;
 	this.tileImage.y = this.y;
 }
+
+function Bullet(id, x, y)
+{
+	this.id = id;
+
+	this.x = x;
+	this.y = y;
+	
+	this.ballImage = new createjs.Bitmap(queue.getResult("ball"));
+
+	//if shooting tank is looking up or down image should be vertical bullet else horizontal bullet
+	
+	this.bulletImage.x = this.x;
+	this.bulletImage.y = this.y;
+}
 //another project's code for reference purposes
 
 /*var stage, queue, bg, player, socketPlayer, ball;
