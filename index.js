@@ -150,13 +150,41 @@ io.sockets.on('connection', function(socket)
 
 				}
 		}
+	function tankReturn(sckLength)
+		{
+			switch (sckLength)
+				{
+					case 1:
+						return 1;
+						break;
+
+					case 2:
+						return 2;
+						break;
+
+					case 3:
+						return 3;
+						break;
+
+					case 4: 
+						return 4;
+						break;
+
+					default:
+						return false;
+						break;	
+
+
+				}
+		}
 	
 	socket.emit("yourID", {
 							"name":socket.id,
 							"side":sideReturn(sckt.length),
 							"player":numReturn(sckt.length),
 							"x":xReturn(sckt.length),
-							"y":yReturn(sckt.length)
+							"y":yReturn(sckt.length),
+							"img":tankReturn(sckt.length)
 						  });
 	
 	//Listening to any movement	
