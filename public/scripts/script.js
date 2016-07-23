@@ -67,7 +67,7 @@ $(function()
 							j++;
 						}
 
-		socket.on("yourID", function(data)
+			socket.on("yourID", function(data)
 				{
 					//making the side global
 					window["side"] = data["side"];
@@ -84,6 +84,29 @@ $(function()
 					// show everything in the stage				
 					stage.update();				
 				});
+
+			socket.on("newPlayer", function(data)
+			{
+
+				socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"]);
+
+				stage.addChild(socketPlayer.playerImage);
+				
+				stage.update();
+			});
+
+			socket.on("firstPosition", function(data)
+			{
+				socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"]);
+				
+				stage.addChild(socketPlayer.playerImage);
+
+				stage.update();
+				
+				//Tell server that players are ready, pass canvas data
+				//socket.emit("playersReady", {"x":stage.canvas.width, "y":stage.canvas.height});
+			});
+
 
 
 					socket = io.connect();
