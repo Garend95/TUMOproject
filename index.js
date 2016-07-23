@@ -214,7 +214,7 @@ io.sockets.on('connection', function(socket)
 
 	socket.on('newPlayerCreated', function(data)
 	{
-		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"]});
+		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"], "img":data});
 		
 		//deciding his position on the map
 		console.log("This is new player position - " + data["side"]);

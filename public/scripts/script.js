@@ -73,13 +73,13 @@ $(function()
 					window["side"] = data["side"];
 					
 					//creating the object
-					player = new Player(data["name"], window["side"], data["player"], data["x"], data["y"]);
+					player = new Player(data["name"], window["side"], data["player"], data["x"], data["y"], data["img"]);
 					
 					//adding player to the stage
 					stage.addChild(player.playerImage);
 				
 					//Report the server that player is created, and send the data
-					socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who});
+					socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who, "img":player.img});
 					
 					// show everything in the stage				
 					stage.update();				
