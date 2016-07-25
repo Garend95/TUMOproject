@@ -1,0 +1,23 @@
+{
+  "name": "tumo_project",
+  "version": "1.0.0",
+  "description": "Local host multiplayer game for the TUMO programming 3 workshop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Garend95/TUMOproject.git"
+  },
+  "dependencies": {
+    "express": "3.x",
+    "socket.io": "0.9"
+    },
+  "author": "Garen Danageozian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Garend95/TUMOproject/issues"
+  },
+  "homepage": "https://github.com/Garend95/TUMOproject#readme"
+}
