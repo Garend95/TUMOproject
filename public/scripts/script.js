@@ -1,3 +1,15 @@
+//added movement key codes 
+//someone move added for all players but does it send the locations to all the clients
+//added tick handler
+//added image property to new player function and first position
+//removed innacuracy in bullet object
+//need to connect players to their tank colors (solved?) 
+//removed tick handler as it had no use
+//added goldBit object
+//attach second canvas
+//changed where tiles are drawn and instead put in players ready function as a socket.on
+//implemented chat without 
+
 var stage, queue, bg, player, socketPlayer, ball;
 
 //var tileId = Array[][];
@@ -7,9 +19,32 @@ $(function()
 	
 	var socket;
 
-		window["socket"] = socket;				
+		window["socket"] = socket;	
+
+		var messageForm = $("#send-message");
+		var messageBox = $("#textbox");	
+
+		var chat = $("#chat_box");
+
+		messageForm.submit(function(e){
+			e.preventDefault();
+
+			socket.emit('send message', messageBox.val());
+
+			messageBox.val('');
+		});		
+
+		submitClicked = function()
+		{
+			socket.emit('send message', messageBox.val());
+
+			messageBox.val('');
+		}
+
+		
 
 		stage = new createjs.Stage("my_canvas");
+		secondStage = new createjs.Stage("upper_canvas");
 
 		queue = new createjs.LoadQueue(true);
 		
@@ -20,22 +55,22 @@ $(function()
 							{id:"goldDown", src:"/public/pics/resource/cargo_gold_4.png"},
 							{id:"goldLeft", src:"/public/pics/resource/cargo_gold_1.png"},
 							{id:"goldRight", src:"/public/pics/resource/cargo_gold_3.png"},
-							{id:"tankRedLeft", src:"/public/pics/resource/player_red_1.png"}
-							{id:"tankRedRight", src:"/public/pics/resource/player_red_3.png"}
-							{id:"tankRedUp", src:"/public/pics/resource/player_red_2.png"}
-							{id:"tankRedDown", src:"/public/pics/resource/player_red_4.png"}
-							{id:"tankBlueLeft", src:"/public/pics/resource/player_blue_1.png"}
-							{id:"tankBlueRight", src:"/public/pics/resource/player_blue_3.png"}
-							{id:"tankBlueUp", src:"/public/pics/resource/player_blue_2.png"}
-							{id:"tankBlueDown", src:"/public/pics/resource/player_blue_4.png"}
-							{id:"tankyellowLeft", src:"/public/pics/resource/player_yellow_1.png"}
-							{id:"tankyellowRight", src:"/public/pics/resource/player_yellow_3.png"}
-							{id:"tankyellowUp", src:"/public/pics/resource/player_yellow_2.png"}
-							{id:"tankyellowDown", src:"/public/pics/resource/player_yellow_4.png"}
-							{id:"tankgreenLeft", src:"/public/pics/resource/player_green_1.png"}
-							{id:"tankgreenRight", src:"/public/pics/resource/player_green_3.png"}
-							{id:"tankgreenUp", src:"/public/pics/resource/player_green_2.png"}
-							{id:"tankgreenDown", src:"/public/pics/resource/player_green_4.png"}
+							{id:"tankRedLeft", src:"/public/pics/resource/player_red_1.png"},
+							{id:"tankRedRight", src:"/public/pics/resource/player_red_3.png"},
+							{id:"tankRedUp", src:"/public/pics/resource/player_red_2.png"},
+							{id:"tankRedDown", src:"/public/pics/resource/player_red_4.png"},
+							{id:"tankBlueLeft", src:"/public/pics/resource/player_blue_1.png"},
+							{id:"tankBlueRight", src:"/public/pics/resource/player_blue_3.png"},
+							{id:"tankBlueUp", src:"/public/pics/resource/player_blue_2.png"},
+							{id:"tankBlueDown", src:"/public/pics/resource/player_blue_4.png"},
+							{id:"tankyellowLeft", src:"/public/pics/resource/player_yellow_1.png"},
+							{id:"tankyellowRight", src:"/public/pics/resource/player_yellow_3.png"},
+							{id:"tankyellowUp", src:"/public/pics/resource/player_yellow_2.png"},
+							{id:"tankyellowDown", src:"/public/pics/resource/player_yellow_4.png"},
+							{id:"tankgreenLeft", src:"/public/pics/resource/player_green_1.png"},
+							{id:"tankgreenRight", src:"/public/pics/resource/player_green_3.png"},
+							{id:"tankgreenUp", src:"/public/pics/resource/player_green_2.png"},
+							{id:"tankgreenDown", src:"/public/pics/resource/player_green_4.png"},
 							{id:"camp1", src:"/public/pics/resource/camp_blue.png"},
 							{id:"camp2", src:"/public/pics/resource/camp_yellow.png"},
 							{id:"camp3", src:"/public/pics/resource/camp_red.png"},
@@ -50,13 +85,13 @@ $(function()
 
 		function handleComplete(evt)
 				{
-					var i = 0, j = 0;
+					/*var i = 0, j = 0;
 					for(var y = 0; y < 929; y + 32 )
 						{
 							for(var x = 0; x < 929; x + 32)
 							{
-								/*tileId.push(y);
-								tileId[y].push(x);*/
+								tileId.push(y);
+								tileId[y].push(x);
 
 								tile = new Tile(("id" +j) + i, x, y);
 
@@ -65,58 +100,193 @@ $(function()
 								i++;
 							}
 							j++;
+						}*/
+
+						socket = io.connect();
+						
+						socket.on("new message", function(data)
+							{
+								chat.append(data + "<br/>");
+							});
+
+					socket.on("yourID", function(data)
+						{
+							//making the side global
+							window["side"] = data["side"];
+							
+							//creating the object
+
+							player = new Player(data["name"], window["side"], data["player"], data["x"], data["y"], data["img"]);
+
+							
+							//adding player to the stage
+							//stage.addChild(player.playerImage);
+						
+							//Report the server that player is created, and send the data
+							socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who, "img":player.img});
+
+							
+							// show everything in the stage				
+							stage.update();				
+						});
+
+
+					socket.on("all players", function(data)
+						{
+							for( var i in data)
+							{
+								if( data[i]["id"] != player["name"]  ){
+									
+									socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"], data["img"]);
+								
+									secondStage.addChild(socketPlayer.playerImage);
+
+									secondStage.update();
+								}
+							}
+							//socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"], data["img"]);
+							
+							//stage.addChild(socketPlayer.playerImage);
+
+							//stage.update();
+							console.log(data);
+							//Tell server that players are ready, pass canvas data
+							//socket.emit("playersReady", {"x":stage.canvas.width, "y":stage.canvas.height});
+						});
+					
+				
+					socket.on("drawMap", function(data){
+						console.log(data);
+							for(var t in data)
+							{
+								tile = new Tile(data[t]["count"], data[t]["x"], data[t]["y"]);
+							
+								stage.addChild(tile.tileImage);
+								console.log(tile);
+								console.log(tile.tileImage);
+
+
+								stage.update();
+							}
+							/*tile = new Tile((data["count"], data["x"], data["y"]));
+
+								stage.addChild(tile.tileImage);*/	
+
+								//stage.update();
+						});
+
+
+					socket.on("enterGoldBit", function(data)
+						{
+							gold = new goldBit(data["id"], data["x"], data["y"], data["img"]);
+							
+							stage.addChild(gold.goldBitImage);
+							
+							stage.update();
+						});
+					
+					socket.on("playerLeft", function(data)
+								{
+									stage.removeChild(socketPlayer.playerImage);
+									
+									stage.update();
+									
+									socketPlayer = null;
+								});
+
+					socket.on("someOneMove", function(data)
+						{
+							//who is moving
+							console.log("player is - " + data["player"]);
+							
+					
+							if(data["player"] == "first")
+							{
+								if(data["id"] == player.id)
+									player.playerImage.y = data["y"];
+								else
+									socketPlayer.playerImage.y = data["y"];
+							}
+							
+						
+							if(data["player"] == "second")
+							{
+								if(data["id"] == player.id)
+									player.playerImage.y = data["y"];
+								else
+									socketPlayer.playerImage.y = data["y"];
+							}
+
+							if(data["player"] == "third")
+							{
+								if(data["id"] == player.id)
+									player.playerImage.y = data["y"];
+								else
+									socketPlayer.playerImage.y = data["y"];
+							}
+
+							if(data["player"] == "fourth")
+							{
+								if(data["id"] == player.id)
+									player.playerImage.y = data["y"];
+								else
+									socketPlayer.playerImage.y = data["y"];
+							}
+							
+							//shows the player's real localtion
+							console.log("first players coord is - " + player.y);
+						});
+
+
+					window.addEventListener("keydown", movement);
+		
+					window.addEventListener("keyup", chMovement);
+					
+					function movement(evt)
+						{
+							/*switch(evt.keyCode)
+							{
+								case 87: 	
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "up"});
+											break;
+								case 83: 	
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "down"});
+											break;
+								case 65:
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "left"});
+											break;	
+								case 68:
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "right"});
+											break;			
+							}*/
+						}
+					
+					function chMovement(evt)
+						{
+							/*switch(evt.keyCode)
+							{
+								case 87: 	
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "up"});
+											break;
+								case 83: 	
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "down"});
+											break;
+								case 65:
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "left"});
+											break;	
+								case 68:
+											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "right"});
+							}*/
 						}
 
 
-			socket.on("yourID", function(data)
-				{
-					//making the side global
-					window["side"] = data["side"];
-					
-					//creating the object
 
-					player = new Player(data["name"], window["side"], data["player"], data["x"], data["y"], data["img"]);
+							createjs.Ticker.setFPS(60);
 
 					
-					//adding player to the stage
-					stage.addChild(player.playerImage);
-				
-					//Report the server that player is created, and send the data
-					socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who, "img":player.img});
+					stage.update();
+			}	
 
-					
-					// show everything in the stage				
-					stage.update();				
-				});
-
-			socket.on("newPlayer", function(data)
-			{
-
-				socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"]);
-
-				stage.addChild(socketPlayer.playerImage);
-				
-				stage.update();
-			});
-
-			socket.on("firstPosition", function(data)
-			{
-				socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"]);
-				
-				stage.addChild(socketPlayer.playerImage);
-
-				stage.update();
-				
-				//Tell server that players are ready, pass canvas data
-				//socket.emit("playersReady", {"x":stage.canvas.width, "y":stage.canvas.height});
-			});
-
-
-
-					socket = io.connect();
-					
-					update();
-				}	
 
 				
 			
@@ -177,14 +347,25 @@ function Bullet(id, x, y, dir)
 	this.x = x;
 	this.y = y;
 	
-	this.ballImage = new createjs.Bitmap(queue.getResult("ball"));
-
 	//if shooting tank is looking up or down image should be vertical bullet else horizontal bullet
 	if(dir == "horizontal") this.bulletImage = new createjs.Bitmap(queue.getResult("bulletH"));
 	else if(dir == "vertical") this.bulletImage = new createjs.Bitmap(queue.getResult("bulletV"));
 	
 	this.bulletImage.x = this.x;
 	this.bulletImage.y = this.y;
+}
+
+function goldBit(id, x, y, img)
+{
+	this.id = id;
+
+	this.x = x;
+	this.y = y;
+
+	this.goldBitImage = new createjs.Bitmap(queue.getResult("gold"));
+
+	this.goldBitImage.x = this.x;
+	this.goldBitImage.y = this.y;	
 }
 //another project's code for reference purposes
 
@@ -312,7 +493,7 @@ $(function()
 			window.addEventListener("keyup", chMovement);
 			
 			//Listening to any movement
-			socket.on("someOneMove", function(data)
+--			socket.on("someOneMove", function(data)
 			{
 				//who is moving
 				console.log("playes is - " + data["player"]);
