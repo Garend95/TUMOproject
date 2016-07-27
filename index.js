@@ -1,5 +1,9 @@
+//added gold array
+//draw map function defined
+//changed the tile making coordinates to fit in with canvas
 var sckt = [];
 var players = [];
+var tiles = [];
 
 
 var express = require('express');
@@ -29,7 +33,7 @@ io.sockets.on('connection', function(socket)
 	
 	console.log("The id of connected socket - " + socket.id);
 	
-	if(players.length == 4)
+	if(players.length > 4)
 		return false;
 	
 	for(var skt in io.sockets.sockets)
@@ -187,6 +191,12 @@ io.sockets.on('connection', function(socket)
 							"img":tankReturn(sckt.length)
 						  });
 	
+	socket.on('send message', function(data)
+		{
+			io.sockets.emit("new message", data);
+
+			});
+	
 	//Listening to any movement	
 	socket.on('move', function(data)
 						 {
@@ -214,46 +224,38 @@ io.sockets.on('connection', function(socket)
 
 	socket.on('newPlayerCreated', function(data)
 	{
-		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"], "img":data});
+		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"], "img":data["img"]});
 		
 		//deciding his position on the map
 		console.log("This is new player position - " + data["side"]);
-		
-		//sending the new player's data to the other player
-		socket.broadcast.emit("newPlayer", data);
-		
-		//Telling the second player first player's position
-		if(data["player"] == "second")
-			socket.emit("firstPosition", players[0]);
 
-		else if(data["player"] == "third")
-		{
-			socket.emit("firstPosition", players[0]);
-			socket.emit("firstPosition", players[1]);
-		}	
-		else if(data["player"] == "fourth")
-		{
-			socket.emit("firstPosition", players[0]);
-			socket.emit("firstPosition", players[1]);			
-			socket.emit("firstPosition", players[2]);
-		}
+		if(players.length == 4)
+			{
+		io.sockets.emit("all players", players);
+			}
+
 
 	});
-
+	
+	var tileCounter = 0;
 	socket.on("playersReady", function(data)
 	{
-		for(var y = 0; y < 929; y + 32 )
+		for(var y = 50; y < 979; y += 32 )
 		{
-			for(var x = 0; x < 929; x + 32)
+			for(var x = 900; x < 1829; x += 32)
 			{
-				io.sockets.emit("drawMap", {
-								"x":x,
-								"y":y})
+				tiles.push({"x":x, "y":y, "count":tileCounter});
+				//io.sockets.emit("drawMap", {"x":x, "y":y, "count":tileCounter});
+				tileCounter++;
 			}
+
 		}
+		console.log(tiles);
+
+		io.sockets.emit("drawMap", tiles );
 		
 		
-		for(var i = 1; i < 51; i++)
+		/*for(var i = 1; i < 51; i++)
 		{
 			goldBit = {
 						"id" : "gold" + i,
@@ -264,7 +266,7 @@ io.sockets.on('connection', function(socket)
 					
 			io.sockets.emit("enterGoldBit", goldBit);
 
-		}	   
+		}*/	   
 	});
 
 	socket.on('disconnect', function()
