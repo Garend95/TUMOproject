@@ -21,7 +21,7 @@ app.use("/public", express.static(__dirname + '/public'));
 app.get('/:file', function(req, res, next)
 	{	
 	
-		console.log("File is - " + req.params.file);
+		//console.log("File is - " + req.params.file);
 	
 		res.sendfile(__dirname + '/' + req.params.file);
 	}	
@@ -36,10 +36,10 @@ io.sockets.on('connection', function(socket)
 	if(players.length > 4)
 		return false;
 	
-	for(var skt in io.sockets.sockets)
+	/*for(var skt in io.sockets.sockets)
 	{
 		console.log(io.sockets.sockets[skt].id);
-	}
+	}*/
 	
 	sckt.push(socket.id);
 
@@ -155,6 +155,7 @@ io.sockets.on('connection', function(socket)
 				}
 		}
 	function tankReturn(sckLength)
+
 		{
 			switch (sckLength)
 				{
@@ -182,6 +183,7 @@ io.sockets.on('connection', function(socket)
 				}
 		}
 	
+	
 	socket.emit("yourID", {
 							"name":socket.id,
 							"side":sideReturn(sckt.length),
@@ -197,7 +199,7 @@ io.sockets.on('connection', function(socket)
 
 			});
 	
-	//Listening to any movement	
+
 	socket.on('move', function(data)
 						 {
 
@@ -226,8 +228,7 @@ io.sockets.on('connection', function(socket)
 	{
 		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"], "img":data["img"]});
 		
-		//deciding his position on the map
-		console.log("This is new player position - " + data["side"]);
+		console.log("This is new player img number " + data["img"]);
 
 		if(players.length == 4)
 			{
@@ -238,13 +239,15 @@ io.sockets.on('connection', function(socket)
 	});
 	
 	var tileCounter = 0;
-	socket.on("playersReady", function(data)
+	socket.on("playersReady", function()
 	{
-		for(var y = 50; y < 979; y += 32 )
+		console.log("playersReady emitted");
+		for(var y = 0; y < 929; y += 32 )
 		{
-			for(var x = 900; x < 1829; x += 32)
+			for(var x = 0; x < 929; x += 32)
 			{
-				tiles.push({"x":x, "y":y, "count":tileCounter});
+				var luck = Math.floor(Math.random() * 11);
+				tiles.push({"x":x, "y":y, "count":tileCounter, "img":luck});
 				//io.sockets.emit("drawMap", {"x":x, "y":y, "count":tileCounter});
 				tileCounter++;
 			}
