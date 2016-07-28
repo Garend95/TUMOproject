@@ -4,6 +4,7 @@
 var sckt = [];
 var players = [];
 var tiles = [];
+var goldArray = [];
 
 
 var express = require('express');
@@ -241,7 +242,7 @@ io.sockets.on('connection', function(socket)
 	var tileCounter = 0;
 	socket.on("playersReady", function()
 	{
-		console.log("playersReady emitted");
+		//console.log("playersReady emitted");
 		for(var y = 0; y < 929; y += 32 )
 		{
 			for(var x = 0; x < 929; x += 32)
@@ -253,23 +254,20 @@ io.sockets.on('connection', function(socket)
 			}
 
 		}
-		console.log(tiles);
+		//console.log(tiles);
 
 		io.sockets.emit("drawMap", tiles );
 		
 		
-		/*for(var i = 1; i < 51; i++)
+		for(var i = 1; i < 51; i++)
 		{
-			goldBit = {
-						"id" : "gold" + i,
-						"sprite" : "gold.png",
-						"x" : (Math.random()*896),
-						"y" : (Math.random()*896)
-					};
-					
-			io.sockets.emit("enterGoldBit", goldBit);
-
-		}*/	   
+			var x = (Math.random()*896);
+			var y = (Math.random()*896);
+			goldArray.push = ({"id" : i, "x" : x, "y" : y});
+			//console.log("this loop ran " + i + " times.");			
+		}	 
+		//console.log(goldArray.length);
+		 io.sockets.emit("enterGoldBit", goldArray); 
 	});
 
 	socket.on('disconnect', function()

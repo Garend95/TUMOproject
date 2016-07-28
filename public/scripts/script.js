@@ -10,7 +10,7 @@
 //changed where tiles are drawn and instead put in players ready function as a socket.on
 //implemented chat without 
 
-var stage, queue, bg, player, socketPlayer, ball, tile;
+var stage, secondStage, queue, bg, player, socketPlayer, ball, tile, gold;
 
 
 //var tileId = Array[][];
@@ -120,7 +120,6 @@ $(function()
 							
 							//secondStage.addChild(player.playerImage);
 						
-							//Report the server that player is created, and send the data
 							socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who, "img":player.img});
 
 											
@@ -140,16 +139,15 @@ $(function()
 									
 									secondStage.addChild(socketPlayer.playerImage);
 
-									secondStage.update();
+								
 								}
 							}
-							//socketPlayer = new Player(data["id"], data["side"], data["player"], data["x"], data["y"], data["img"]);
+
 							
 							secondStage.addChild(socketPlayer.playerImage);
 
 							secondStage.update();
 							//console.log(data);
-							//Tell server that players are ready, pass canvas data
 						 	socket.emit("playersReady");
 						});
 					
@@ -169,21 +167,21 @@ $(function()
 							}
 
 							stage.update();
-							/*tile = new Tile((data["count"], data["x"], data["y"]));
-
-								stage.addChild(tile.tileImage);*/	
-
-								//stage.update();
+	
 						});
 
 
 					socket.on("enterGoldBit", function(data)
 						{
-							gold = new goldBit(data["id"], data["x"], data["y"], data["img"]);
 							
-							stage.addChild(gold.goldBitImage);
+							for(var i = 0; i < 50; i++){
+								gold = new goldBit(data["id"], data["x"], data["y"]);
+								
+								secondStage.addChild(gold.goldBitImage);
 							
-							stage.update();
+							}
+
+							secondStage.update();
 						});
 					
 					socket.on("playerLeft", function(data)
@@ -365,7 +363,7 @@ function Bullet(id, x, y, dir)
 	this.bulletImage.y = this.y;
 }
 
-function goldBit(id, x, y, img)
+function goldBit(id, x, y)
 {
 	this.id = id;
 
