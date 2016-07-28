@@ -11,7 +11,7 @@
 //implemented chat without 
 
 var stage, secondStage, queue, bg, player, socketPlayer, ball, tile, gold;
-
+var scktarray = [];
 
 //var tileId = Array[][];
 
@@ -64,17 +64,17 @@ $(function()
 							{id:"tankBlueRight", src:"/public/pics/resource/player_blue_3.png"},
 							{id:"tankBlueUp", src:"/public/pics/resource/player_blue_2.png"},
 							{id:"tankBlueDown", src:"/public/pics/resource/player_blue_4.png"},
-							{id:"tankyellowLeft", src:"/public/pics/resource/player_yellow_1.png"},
-							{id:"tankyellowRight", src:"/public/pics/resource/player_yellow_3.png"},
-							{id:"tankyellowUp", src:"/public/pics/resource/player_yellow_2.png"},
-							{id:"tankyellowDown", src:"/public/pics/resource/player_yellow_4.png"},
-							{id:"tankgreenLeft", src:"/public/pics/resource/player_green_1.png"},
-							{id:"tankgreenRight", src:"/public/pics/resource/player_green_3.png"},
-							{id:"tankgreenUp", src:"/public/pics/resource/player_green_2.png"},
-							{id:"tankgreenDown", src:"/public/pics/resource/player_green_4.png"},
-							{id:"camp1", src:"/public/pics/resource/camp_blue.png"},
-							{id:"camp2", src:"/public/pics/resource/camp_yellow.png"},
-							{id:"camp3", src:"/public/pics/resource/camp_red.png"},
+							{id:"tankYellowLeft", src:"/public/pics/resource/player_yellow_1.png"},
+							{id:"tankYellowRight", src:"/public/pics/resource/player_yellow_3.png"},
+							{id:"tankYellowUp", src:"/public/pics/resource/player_yellow_2.png"},
+							{id:"tankYellowDown", src:"/public/pics/resource/player_yellow_4.png"},
+							{id:"tankGreenLeft", src:"/public/pics/resource/player_green_1.png"},
+							{id:"tankGreenRight", src:"/public/pics/resource/player_green_3.png"},
+							{id:"tankGreenUp", src:"/public/pics/resource/player_green_2.png"},
+							{id:"tankGreenDown", src:"/public/pics/resource/player_green_4.png"},
+							{id:"camp1", src:"/public/pics/resource/camp_red.png"},
+							{id:"camp2", src:"/public/pics/resource/camp_blue.png"},
+							{id:"camp3", src:"/public/pics/resource/camp_yellow.png"},
 							{id:"camp4", src:"/public/pics/resource/camp_green.png"},
 							{id:"bulletH", src:"/public/pics/resource/bullet1_1.png"},
 							{id:"bulletV", src:"/public/pics/resource/bullet1_2.png"},
@@ -87,7 +87,7 @@ $(function()
 		function handleComplete(evt)
 				{
 					/*var i = 0, j = 0;
-					for(var y = 0; y < 929; y + 32 )
+					fors(var y = 0; y < 929; y + 32 )
 						{
 							for(var x = 0; x < 929; x + 32)
 							{
@@ -112,15 +112,16 @@ $(function()
 
 					socket.on("yourID", function(data)
 						{
-							console.log("")
+							
 							window["side"] = data["side"];
 
-							player = new Player(data["name"], window["side"], data["player"], data["x"], data["y"], data["img"]);
+							player = new Player(data["name"], window["side"], data["player"], data["x"], data["y"], data["img"], data["base"]);
 						
 							
-							//secondStage.addChild(player.playerImage);
+							secondStage.addChild(player.playerImage);
+							secondStage.addChild(player.baseImage);
 						
-							socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who, "img":player.img});
+							socket.emit("newPlayerCreated", {"id":player.id, "x":player.x, "y":player.y, "side":player.screenSide, "player":player.who, "img":player.img, "base":player.base});
 
 											
 							secondStage.update();				
@@ -134,17 +135,16 @@ $(function()
 								//console.log("the value of i is " + i);
 								if( data[i]["id"] != player["id"]  ){
 									
-									console.log("i created a socket player");
-									socketPlayer = new Player(data[i]["id"], data[i]["side"], data[i]["player"], data[i]["x"], data[i]["y"], data[i]["img"]);
+									//console.log("i created a socket player");
+									socketPlayer = new Player(data[i]["id"], data[i]["side"], data[i]["player"], data[i]["x"], data[i]["y"], data[i]["img"], data[i]["base"]);
 									
+									scktarray.push(socketPlayer);
 									secondStage.addChild(socketPlayer.playerImage);
+									secondStage.addChild(socketPlayer.baseImage);
 
 								
 								}
 							}
-
-							
-							secondStage.addChild(socketPlayer.playerImage);
 
 							secondStage.update();
 							//console.log(data);
@@ -175,7 +175,7 @@ $(function()
 						{
 							
 							for(var i = 0; i < 50; i++){ 
-								gold = new goldBit(data["id"], data["x"], data["y"]); //tried to use data[i]["id"] etc instead but It says data[i] is undefined
+								gold = new goldBit(data[i]["id"], data[i]["x"], data[i]["y"]); //tried to use data[i]["id"] etc instead but It says data[i] is undefined
 								
 								secondStage.addChild(gold.goldBitImage);
 							
@@ -201,39 +201,89 @@ $(function()
 					
 							if(data["player"] == "first")
 							{
-								if(data["id"] == player.id)
+								//console.log("first was accessed");
+								if(data["id"] == player.id){
 									player.playerImage.y = data["y"];
-								else
-									socketPlayer.playerImage.y = data["y"];
+									player.playerImage.x = data["x"];
+								}
+								else 
+								{
+									for( var i = 0; i < scktarray.length; i++ ){
+										
+										if(scktarray[i].who == "first")
+											{
+												scktarray[i].playerImage.y = data["y"];
+												scktarray[i].playerImage.x = data["x"];
+											}
+									}
+									//console.log("weebs");
+									//socketPlayer.playerImage.y = data["y"];
+									//socketPlayer.playerImage.x = data["x"];
+								}	
+									
 							}
-							
-						
-							if(data["player"] == "second")
+							else if(data["player"] == "second")
 							{
-								if(data["id"] == player.id)
+								//console.log("second was accessed");
+								if(data["id"] == player.id){
 									player.playerImage.y = data["y"];
+									player.playerImage.x = data["x"];
+								}
 								else
-									socketPlayer.playerImage.y = data["y"];
+								{
+									for( var i = 0; i < scktarray.length; i++ ){
+										
+										if(scktarray[i].who == "second")
+											{
+												scktarray[i].playerImage.y = data["y"];
+												scktarray[i].playerImage.x = data["x"];
+											}
+									}
+								}	
+							}
+							else if(data["player"] == "third")
+							{
+								
+								if(data["id"] == player.id){
+									player.playerImage.y = data["y"];
+									player.playerImage.x = data["x"];
+								}
+								else
+								{
+									for( var i = 0; i < scktarray.length; i++ ){
+										
+										if(scktarray[i].who == "third")
+											{
+												scktarray[i].playerImage.y = data["y"];
+												scktarray[i].playerImage.x = data["x"];
+											}
+									}
+								}	
+							}
+							else if(data["player"] == "fourth")
+							{
+								//console.log("fourth was accessed");
+								if(data["id"] == player.id){
+									player.playerImage.y = data["y"];
+									player.playerImage.x = data["x"];
+								}
+								else
+								{
+									for( var i = 0; i < scktarray.length; i++ ){
+										
+										if(scktarray[i].who == "fourth")
+											{
+												scktarray[i].playerImage.y = data["y"];
+												scktarray[i].playerImage.x = data["x"];
+											}
+									}
+								}	
 							}
 
-							if(data["player"] == "third")
-							{
-								if(data["id"] == player.id)
-									player.playerImage.y = data["y"];
-								else
-									socketPlayer.playerImage.y = data["y"];
-							}
-
-							if(data["player"] == "fourth")
-							{
-								if(data["id"] == player.id)
-									player.playerImage.y = data["y"];
-								else
-									socketPlayer.playerImage.y = data["y"];
-							}
+							secondStage.update();
 							
 							//shows the player's real localtion
-							console.log("first players coord is - " + player.y);
+							//console.log("first players coord is - " + player.y);
 						});
 
 
@@ -243,7 +293,7 @@ $(function()
 					
 					function movement(evt)
 						{
-							/*switch(evt.keyCode)
+							switch(evt.keyCode)
 							{
 								case 87: 	
 											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "up"});
@@ -257,12 +307,12 @@ $(function()
 								case 68:
 											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "right"});
 											break;			
-							}*/
+							}
 						}
 					
 					function chMovement(evt)
 						{
-							/*switch(evt.keyCode)
+							switch(evt.keyCode)
 							{
 								case 87: 	
 											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "up"});
@@ -275,7 +325,7 @@ $(function()
 											break;	
 								case 68:
 											socket.emit("move", {"player":player.who, "y" : player.y, "dir" : "right"});
-							}*/
+							}	
 						}
 
 
@@ -291,7 +341,7 @@ $(function()
 			
 });
 
-function Player(id, sd, wh, x, y, img)
+function Player(id, sd, wh, x, y, img, base)
 {
 	
 	
@@ -305,6 +355,7 @@ function Player(id, sd, wh, x, y, img)
 	this.y = y;
 
 	this.img = img;
+	this.base = base;
 	
 	switch (this.img){
 		case 1:
@@ -314,10 +365,12 @@ function Player(id, sd, wh, x, y, img)
 			this.playerImage = new createjs.Bitmap(queue.getResult("tankBlueUp"));
 			break;
 		case 3:
-			this.playerImage = new createjs.Bitmap(queue.getResult("tankYellowUp"));
+			this.playerImage = new createjs.Bitmap(queue.getResult("tankYellowDown"));
+			//console.log("yellow tank chosen");
 			break;
 		case 4:	
-			this.playerImage = new createjs.Bitmap(queue.getResult("tankGreenUp"));
+			this.playerImage = new createjs.Bitmap(queue.getResult("tankGreenDown"));
+			//console.log("yellow tank chosen");
 			break;	
 		default:
 			console.log("no image was chosen also I hate my life");
@@ -325,6 +378,33 @@ function Player(id, sd, wh, x, y, img)
 	
 	}
 
+	
+	switch (this.base){
+		case 1:
+			this.baseImage = new createjs.Bitmap(queue.getResult("camp1"));
+			this.baseImage.x = 0;
+			this.baseImage.y = 864;
+			break;
+		case 2:
+			this.baseImage = new createjs.Bitmap(queue.getResult("camp2"));
+			this.baseImage.x = 864;
+			this.baseImage.y = 864;
+			break;
+		case 3:
+			this.baseImage = new createjs.Bitmap(queue.getResult("camp3"));
+			this.baseImage.x = 0;
+			this.baseImage.y = 0;
+			break;
+		case 4:	
+			this.baseImage = new createjs.Bitmap(queue.getResult("camp4"));
+			this.baseImage.x = 864;
+			this.baseImage.y = 0;
+			break;	
+		default:
+			console.log("no base was chosen 3spooky5me");
+			break;	
+	
+	}
 	
 	this.playerImage.x = this.x;
 	this.playerImage.y = this.y;
