@@ -5,7 +5,8 @@ var sckt = [];
 var players = [];
 var tiles = [];
 var goldArray = [];
-
+var bases = [];
+var readyCounter = 0;
 
 var express = require('express');
 var app = express();
@@ -184,6 +185,34 @@ io.sockets.on('connection', function(socket)
 				}
 		}
 	
+	function baseReturn(sckLength)
+		{
+			switch (sckLength)
+				{
+					case 1:
+						return 1;
+						break;
+
+					case 2:
+						return 2;
+						break;
+
+					case 3:
+						return 3;
+						break;
+
+					case 4: 
+						return 4;
+						break;
+
+					default:
+						return false;
+						break;	
+
+
+				}
+		}
+	
 	
 	socket.emit("yourID", {
 							"name":socket.id,
@@ -191,7 +220,8 @@ io.sockets.on('connection', function(socket)
 							"player":numReturn(sckt.length),
 							"x":xReturn(sckt.length),
 							"y":yReturn(sckt.length),
-							"img":tankReturn(sckt.length)
+							"img":tankReturn(sckt.length),
+							"base":baseReturn(sckt.length)
 						  });
 	
 	socket.on('send message', function(data)
@@ -208,17 +238,123 @@ io.sockets.on('connection', function(socket)
 							{
 								if(players[tmp]["player"] == data["player"])
 								{
-									if(data["dir"] == "down")
-										players[tmp]["y"] += 5;
+									/*
+									switch(data["player"])
+									{
+										case "first":
+											if(data["dir"] == "down"){
+												data.playerImage = new createjs.Bitmap(queue.getResult("tankRedDown"));
+												players[tmp]["y"] += 5;
+											}
 										
-									if(data["dir"] == "up")
-										players[tmp]["y"] -= 5;
+											if(data["dir"] == "up"){
+												data.playerImage = new createjs.Bitmap(queue.getResult("tankRedUp"));
+												players[tmp]["y"] -= 5;
+											}
 
-									if(data["dir"] == "left")
-										player[tmp]["x"] -= 5;
+											if(data["dir"] == "left"){
+												data.playerImage = new createjs.Bitmap(queue.getResult("tankRedLeft"));
+												players[tmp]["x"] -= 5;
+											}
+
+											if(data["dir"] == "right")
+											{	
+												data.playerImage = new createjs.Bitmap(queue.getResult("tankRedRight"));
+												players[tmp]["x"] += 5;
+											}
+										break;
+
+										case "second":
+											if(data["dir"] == "down"){
+
+												players[tmp]["y"] += 5;
+											}
+										
+											if(data["dir"] == "up"){
+
+												players[tmp]["y"] -= 5;
+											}
+
+											if(data["dir"] == "left"){
+
+												players[tmp]["x"] -= 5;
+											}
+
+											if(data["dir"] == "right")
+											{
+
+												players[tmp]["x"] += 5;
+											}
+										break;
+
+										case "third":
+											if(data["dir"] == "down"){
+
+												players[tmp]["y"] += 5;
+											}
+										
+											if(data["dir"] == "up"){
+
+												players[tmp]["y"] -= 5;
+											}
+
+											if(data["dir"] == "left"){
+
+												players[tmp]["x"] -= 5;
+											}
+
+											if(data["dir"] == "right")
+											{
+
+												players[tmp]["x"] += 5;
+											}
+										break;
+
+										case "fourth":
+											if(data["dir"] == "down"){
+
+												players[tmp]["y"] += 5;
+											}
+										
+											if(data["dir"] == "up"){
+
+												players[tmp]["y"] -= 5;
+											}
+
+											if(data["dir"] == "left"){
+
+												players[tmp]["x"] -= 5;
+											}
+
+											if(data["dir"] == "right")
+											{
+
+												players[tmp]["x"] += 5;
+											}
+										break;
+									}
+									*/ 
+									
+									if(data["dir"] == "down"){
+
+										players[tmp]["y"] += 5;
+									}
+										
+									if(data["dir"] == "up"){
+
+										players[tmp]["y"] -= 5;
+									}
+
+									if(data["dir"] == "left"){
+
+										players[tmp]["x"] -= 5;
+									}
 
 									if(data["dir"] == "right")
-									players[tmp]["x"] += 5;
+									{
+
+										players[tmp]["x"] += 5;
+									}
 										
 									io.sockets.emit("someOneMove", players[tmp]);
 								}
@@ -227,9 +363,9 @@ io.sockets.on('connection', function(socket)
 
 	socket.on('newPlayerCreated', function(data)
 	{
-		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"], "img":data["img"]});
+		players.push({"id":data["id"], "x":data["x"], "y":data["y"], "side":data["side"], "player":data["player"], "img":data["img"], "base":data["base"]});
 		
-		console.log("This is new player img number " + data["img"]);
+		//console.log("This is new player img number " + data["img"]);
 
 		if(players.length == 4)
 			{
@@ -240,34 +376,42 @@ io.sockets.on('connection', function(socket)
 	});
 	
 	var tileCounter = 0;
+	
 	socket.on("playersReady", function()
 	{
-		//console.log("playersReady emitted");
-		for(var y = 0; y < 929; y += 32 )
-		{
-			for(var x = 0; x < 929; x += 32)
+		++readyCounter;
+		console.log("ready counter is " + readyCounter);
+		if(readyCounter == 4){
+			for(var y = 0; y < 929; y += 32 )
 			{
-				var luck = Math.floor(Math.random() * 11);
-				tiles.push({"x":x, "y":y, "count":tileCounter, "img":luck});
-				//io.sockets.emit("drawMap", {"x":x, "y":y, "count":tileCounter});
-				tileCounter++;
+				for(var x = 0; x < 929; x += 32)
+				{
+					var luck = Math.floor(Math.random() * 11);
+					tiles.push({"x":x, "y":y, "count":tileCounter, "img":luck});
+					tileCounter++;
+				}
+
 			}
+			//console.log(tiles);
+			io.sockets.emit("drawMap", tiles );
 
+			
+			
+			for(var i = 1; i < 51; i++)
+			{
+				var x = (Math.random()*896);
+				var y = (Math.random()*896);
+				goldArray.push({"id" : i, "x" : x, "y" : y});
+				//console.log("this loop ran " + i + " times.");			
+			}	 
+			//console.log(goldArray.length);
+			io.sockets.emit("enterGoldBit", goldArray); 
+
+			readyCounter = 0;
 		}
-		//console.log(tiles);
 
-		io.sockets.emit("drawMap", tiles );
-		
-		
-		for(var i = 1; i < 51; i++)
-		{
-			var x = (Math.random()*896);
-			var y = (Math.random()*896);
-			goldArray.push = ({"id" : i, "x" : x, "y" : y});
-			//console.log("this loop ran " + i + " times.");			
-		}	 
-		//console.log(goldArray.length);
-		 io.sockets.emit("enterGoldBit", goldArray); 
+
+
 	});
 
 	socket.on('disconnect', function()
