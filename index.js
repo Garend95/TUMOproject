@@ -356,7 +356,7 @@ io.sockets.on('connection', function(socket)
 										players[tmp]["x"] += 5;
 									}
 										
-									io.sockets.emit("someOneMove", players[tmp]);
+									io.sockets.emit("someOneMove", {"pl":players[tmp], "dir":data["dir"]});
 								}
 							}							
 						 });	

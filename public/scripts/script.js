@@ -196,15 +196,15 @@ $(function()
 					socket.on("someOneMove", function(data)
 						{
 							//who is moving
-							console.log("player is - " + data["player"]);
+							console.log("player is - " + data["pl"]["player"]);
 							
 					
-							if(data["player"] == "first")
+							if(data["pl"]["player"] == "first")
 							{
 								//console.log("first was accessed");
-								if(data["id"] == player.id){
-									player.playerImage.y = data["y"];
-									player.playerImage.x = data["x"];
+								if(data["pl"]["id"] == player.id){
+									player.playerImage.y = data["pl"]["y"];
+									player.playerImage.x = data["pl"]["x"];
 								}
 								else 
 								{
@@ -212,22 +212,22 @@ $(function()
 										
 										if(scktarray[i].who == "first")
 											{
-												scktarray[i].playerImage.y = data["y"];
-												scktarray[i].playerImage.x = data["x"];
+												scktarray[i].playerImage.y = data["pl"]["y"];
+												scktarray[i].playerImage.x = data["pl"]["x"];
 											}
 									}
 									//console.log("weebs");
-									//socketPlayer.playerImage.y = data["y"];
-									//socketPlayer.playerImage.x = data["x"];
+									//socketPlayer.playerImage.y = data["pl"]["y"];
+									//socketPlayer.playerImage.x = data["pl"]["x"];
 								}	
 									
 							}
-							else if(data["player"] == "second")
+							else if(data["pl"]["player"] == "second")
 							{
 								//console.log("second was accessed");
-								if(data["id"] == player.id){
-									player.playerImage.y = data["y"];
-									player.playerImage.x = data["x"];
+								if(data["pl"]["id"] == player.id){
+									player.playerImage.y = data["pl"]["y"];
+									player.playerImage.x = data["pl"]["x"];
 								}
 								else
 								{
@@ -235,18 +235,18 @@ $(function()
 										
 										if(scktarray[i].who == "second")
 											{
-												scktarray[i].playerImage.y = data["y"];
-												scktarray[i].playerImage.x = data["x"];
+												scktarray[i].playerImage.y = data["pl"]["y"];
+												scktarray[i].playerImage.x = data["pl"]["x"];
 											}
 									}
 								}	
 							}
-							else if(data["player"] == "third")
+							else if(data["pl"]["player"] == "third")
 							{
 								
-								if(data["id"] == player.id){
-									player.playerImage.y = data["y"];
-									player.playerImage.x = data["x"];
+								if(data["pl"]["id"] == player.id){
+									player.playerImage.y = data["pl"]["y"];
+									player.playerImage.x = data["pl"]["x"];
 								}
 								else
 								{
@@ -254,18 +254,18 @@ $(function()
 										
 										if(scktarray[i].who == "third")
 											{
-												scktarray[i].playerImage.y = data["y"];
-												scktarray[i].playerImage.x = data["x"];
+												scktarray[i].playerImage.y = data["pl"]["y"];
+												scktarray[i].playerImage.x = data["pl"]["x"];
 											}
 									}
 								}	
 							}
-							else if(data["player"] == "fourth")
+							else if(data["pl"]["player"] == "fourth")
 							{
 								//console.log("fourth was accessed");
-								if(data["id"] == player.id){
-									player.playerImage.y = data["y"];
-									player.playerImage.x = data["x"];
+								if(data["pl"]["id"] == player.id){
+									player.playerImage.y = data["pl"]["y"];
+									player.playerImage.x = data["pl"]["x"];
 								}
 								else
 								{
@@ -273,8 +273,8 @@ $(function()
 										
 										if(scktarray[i].who == "fourth")
 											{
-												scktarray[i].playerImage.y = data["y"];
-												scktarray[i].playerImage.x = data["x"];
+												scktarray[i].playerImage.y = data["pl"]["y"];
+												scktarray[i].playerImage.x = data["pl"]["x"];
 											}
 									}
 								}	
