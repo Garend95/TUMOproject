@@ -174,8 +174,8 @@ $(function()
 					socket.on("enterGoldBit", function(data)
 						{
 							
-							for(var i = 0; i < 50; i++){
-								gold = new goldBit(data["id"], data["x"], data["y"]);
+							for(var i = 0; i < 50; i++){ 
+								gold = new goldBit(data["id"], data["x"], data["y"]); //tried to use data[i]["id"] etc instead but It says data[i] is undefined
 								
 								secondStage.addChild(gold.goldBitImage);
 							
