@@ -205,6 +205,9 @@ $(function()
 								if(data["pl"]["id"] == player.id){
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
+
+									//tankDirection(data["pl"],data["dir"]);
+
 								}
 								else 
 								{
@@ -214,20 +217,23 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												//tankDirection(scktarray[i],data["dir"]);
 											}
+
 									}
-									//console.log("weebs");
-									//socketPlayer.playerImage.y = data["pl"]["y"];
-									//socketPlayer.playerImage.x = data["pl"]["x"];
+
 								}	
 									
 							}
 							else if(data["pl"]["player"] == "second")
 							{
-								//console.log("second was accessed");
+
 								if(data["pl"]["id"] == player.id){
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
+									
+								//	tankDirection(data["pl"],data["dir"]);
 								}
 								else
 								{
@@ -237,6 +243,8 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												//tankDirection(scktarray[i],data["dir"]);
 											}
 									}
 								}	
@@ -247,6 +255,9 @@ $(function()
 								if(data["pl"]["id"] == player.id){
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
+
+									//tankDirection(data["pl"],data["dir"]);
+	
 								}
 								else
 								{
@@ -256,16 +267,21 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												//tankDirection(scktarray[i],data["dir"]);
 											}
 									}
 								}	
 							}
 							else if(data["pl"]["player"] == "fourth")
 							{
-								//console.log("fourth was accessed");
+
 								if(data["pl"]["id"] == player.id){
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
+
+									//tankDirection(data["pl"],data["dir"]);
+
 								}
 								else
 								{
@@ -275,6 +291,8 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												//tankDirection(scktarray[i],data["dir"]);
 											}
 									}
 								}	
@@ -340,6 +358,86 @@ $(function()
 				
 			
 });
+
+function tankDirection( tank , dir)
+{
+	var d = dir;
+	console.log("tank.who is " + tank.who)
+	if(tank.who == "first"){
+		
+		switch(d)
+				{
+					case "up":
+						console.log("lol");
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankRedUp"));
+						break;
+					case "down":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankRedDown"));
+						break;
+					case "left":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankRedLeft"));
+						break;
+					case "right":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankRedRight"));
+						break;			
+				}
+
+	}else if(tank.who == "second"){	
+
+		switch(d)
+				{
+					case "up":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankBlueUp"));
+						break;
+					case "down":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankBlueDown"));
+						break;
+					case "left":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankBlueLeft"));
+						break;
+					case "right":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankBlueRight"));
+						break;				
+				}
+
+	}else if(tank.who == "third"){	
+
+		switch(d)
+				{
+					case "up":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankYellowUp"));
+						break;
+					case "down":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankYellowDown"));
+						break;
+					case "left":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankYellowLeft"));
+						break;
+					case "right":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankYellowRight"));
+						break;				
+				}
+
+	}else if(tank.who == "fourth"){
+
+		switch(d)
+				{
+					case "up":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankGreenUp"));
+						break;
+					case "down":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankGreenDown"));
+						break;
+					case "left":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankGreenLeft"));
+						break;
+					case "right":
+						tank.playerImage = new createjs.Bitmap(queue.getResult("tankGreenRight"));
+						break;					
+				}
+
+	}			
+}
 
 function Player(id, sd, wh, x, y, img, base)
 {
