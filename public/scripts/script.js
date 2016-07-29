@@ -572,26 +572,35 @@ function goldBit(id, x, y)
 	this.goldBitImage.y = this.y;	
 }
 
-
+var idofCarriedGold = 0;
 function goldCollision(pImage)
 {
 	for(var i in gldarray)
 	{
-		if((pImage.x +32 >= gldarray[i].x && pImage.x <= gldarray[i].x +32) && (pImage.y +32 >= gldarray[i].y && pImage.y <= gldarray[i].y +32))
+		if((pImage.x +32 >= gldarray[i].x && pImage.x <= gldarray[i].x +32) && (pImage.y +32 >= gldarray[i].y && pImage.y <= gldarray[i].y +32) && idofCarriedGold == 0)
 		{
 			gldarray[i].x = pImage.x;
 			gldarray[i].goldBitImage.x = pImage.x;
 
-			//console.log(gldarray[i].x + "gl");
-			//console.log(pImage.x + "pi")
 			gldarray[i].y = pImage.y;
 			gldarray[i].goldBitImage.y = pImage.y;
+
 			gldarray[i].cargo = true;
+			idofCarriedGold = gldarray[i].id;
 			//secondStage.update();
 
-		}
-		else gldarray[i].cargo = false;
+		}else if((pImage.x +32 >= gldarray[i].x && pImage.x <= gldarray[i].x +32) && (pImage.y +32 >= gldarray[i].y && pImage.y <= gldarray[i].y +32) && idofCarriedGold != 0 && gldarray[i].id == idofCarriedGold)
+		{
+				gldarray[i].x = pImage.x;
+				gldarray[i].goldBitImage.x = pImage.x;
 
-		//console.log(gldarray[i].cargo)
+				gldarray[i].y = pImage.y;
+				gldarray[i].goldBitImage.y = pImage.y;
+
+		
+		}
+		//else if (!((pImage.x +32 >= gldarray[i].x && pImage.x <= gldarray[i].x +32) && (pImage.y +32 >= gldarray[i].y && pImage.y <= gldarray[i].y +32)) && idofCarriedGold == 0) gldarray[i].cargo = false;
+
+		console.log(gldarray[i].cargo);
 	}
 }
