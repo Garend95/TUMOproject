@@ -11,7 +11,8 @@
 //implemented chat without 
 
 var stage, secondStage, queue, bg, player, socketPlayer, ball, tile, gold;
-var scktarray = [];
+var scktarray = []; // used to move the correct socketplayer on the clien't screen
+var gldarray = []; // storing the goldBit objects for collision detection via id
 
 //var tileId = Array[][];
 
@@ -176,7 +177,7 @@ $(function()
 							
 							for(var i = 0; i < 50; i++){ 
 								gold = new goldBit(data[i]["id"], data[i]["x"], data[i]["y"]); //tried to use data[i]["id"] etc instead but It says data[i] is undefined
-								
+								gldarray.push(gold);
 								secondStage.addChild(gold.goldBitImage);
 							
 							}
@@ -207,6 +208,7 @@ $(function()
 									player.playerImage.x = data["pl"]["x"];
 
 									//tankDirection(data["pl"],data["dir"]);
+									goldCollision(player.playerImage);
 
 								}
 								else 
@@ -217,6 +219,8 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												goldCollision(scktarray[i].playerImage);
 
 												//tankDirection(scktarray[i],data["dir"]);
 											}
@@ -232,6 +236,8 @@ $(function()
 								if(data["pl"]["id"] == player.id){
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
+
+									goldCollision(player.playerImage);
 									
 								//	tankDirection(data["pl"],data["dir"]);
 								}
@@ -243,6 +249,8 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												goldCollision(scktarray[i].playerImage);
 
 												//tankDirection(scktarray[i],data["dir"]);
 											}
@@ -256,6 +264,8 @@ $(function()
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
 
+									goldCollision(player.playerImage);
+
 									//tankDirection(data["pl"],data["dir"]);
 	
 								}
@@ -267,6 +277,8 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												goldCollision(scktarray[i].playerImage);
 
 												//tankDirection(scktarray[i],data["dir"]);
 											}
@@ -280,6 +292,8 @@ $(function()
 									player.playerImage.y = data["pl"]["y"];
 									player.playerImage.x = data["pl"]["x"];
 
+									goldCollision(player.playerImage);
+
 									//tankDirection(data["pl"],data["dir"]);
 
 								}
@@ -291,6 +305,8 @@ $(function()
 											{
 												scktarray[i].playerImage.y = data["pl"]["y"];
 												scktarray[i].playerImage.x = data["pl"]["x"];
+
+												goldCollision(scktarray[i].playerImage);
 
 												//tankDirection(scktarray[i],data["dir"]);
 											}
@@ -548,8 +564,34 @@ function goldBit(id, x, y)
 	this.x = x;
 	this.y = y;
 
+	this.cargo = false;
+
 	this.goldBitImage = new createjs.Bitmap(queue.getResult("gold"));
 
 	this.goldBitImage.x = this.x;
 	this.goldBitImage.y = this.y;	
+}
+
+
+function goldCollision(pImage)
+{
+	for(var i in gldarray)
+	{
+		if((pImage.x +32 >= gldarray[i].x && pImage.x <= gldarray[i].x +32) && (pImage.y +32 >= gldarray[i].y && pImage.y <= gldarray[i].y +32))
+		{
+			gldarray[i].x = pImage.x;
+			gldarray[i].goldBitImage.x = pImage.x;
+
+			//console.log(gldarray[i].x + "gl");
+			//console.log(pImage.x + "pi")
+			gldarray[i].y = pImage.y;
+			gldarray[i].goldBitImage.y = pImage.y;
+			gldarray[i].cargo = true;
+			//secondStage.update();
+
+		}
+		else gldarray[i].cargo = false;
+
+		//console.log(gldarray[i].cargo)
+	}
 }
